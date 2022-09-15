@@ -1,6 +1,6 @@
 # pitchero-availability
 
-At the time of writing, Pitchero does not provide a means of exporting the play availability as
+At the time of writing, Pitchero does not provide a means of exporting the player availability as
 a text file (or in any other format). This script is a quick and dirty means of achieving this,
 albeit with a couple of simple manual steps.
 
@@ -38,7 +38,7 @@ Note that, on Windows, you may need to run it using the python launcher: `py ava
 
 ## Changing it
 
-There is currently no tests, in the hope that this workaround will not be needed for long...
+There are currently no tests, in the hope that this workaround will not be needed for long...
 
 The code has been formatted with [black](https://github.com/psf/black) and the options `-l 99`
 
