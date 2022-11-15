@@ -8,12 +8,13 @@ from collections import namedtuple
 import re
 import sys
 
-_Player = namedtuple("_Player", "surname firstname availability")
+_Player = namedtuple("_Player", "surname firstname availability comment")
 
 _NAME_RE = re.compile(r"<strong>(?P<surname>[^<]*)</strong>,  (?P<firstname>.*)$", re.M)
 _AVAIL_RE = re.compile(
     r'/availability/(?P<date>[0-9-]*)".* data-original-title="(?P<availability>[^"]*)"', re.M
 )
+_COMMENT_RE = re.compile(r"- (?P<comment>.*) By", re.M)
 
 _AVAIL_TYPES = ("Available", "Not sure", "Unavailable", "Not set")
 
@@ -33,11 +34,16 @@ for match in _NAME_RE.finditer(html):
     AVAIL = availMatch.group("availability")
     for kind in _AVAIL_TYPES:
         if AVAIL.startswith(kind):
+            commentMatch = _COMMENT_RE.search(AVAIL)
+            if commentMatch:
+                comment = commentMatch.group("comment")
+            else:
+                comment = None
             AVAIL = kind
             break
     else:
         raise Exception("Unknown: " + AVAIL)
-    player = _Player(match.group("surname"), match.group("firstname"), AVAIL)
+    player = _Player(match.group("surname"), match.group("firstname"), AVAIL, comment)
     players.append(player)
 
 players.sort()
@@ -46,4 +52,9 @@ for kind in _AVAIL_TYPES:
     print("\n" + kind + ":")
     for player in players:
         if player.availability == kind:
-            print("   ", player.firstname, player.surname)
+            comment = player.comment
+            if comment is None:
+                comment = ""
+            else:
+                comment = f" ({comment})"
+            print("   ", player.firstname, player.surname, comment)
