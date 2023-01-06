@@ -15,6 +15,7 @@ _AVAIL_RE = re.compile(
     r'/availability/(?P<date>[0-9-]*)".* data-original-title="(?P<availability>[^"]*)"', re.M
 )
 _COMMENT_RE = re.compile(r"- (?P<comment>.*) By", re.M)
+_COMMENT_RE_2 = re.compile(r"- (?P<comment>.*)$", re.M)
 
 _AVAIL_TYPES = ("Available", "Not sure", "Unavailable", "Not set")
 
@@ -38,7 +39,13 @@ for match in _NAME_RE.finditer(html):
             if commentMatch:
                 comment = commentMatch.group("comment")
             else:
-                comment = None
+                commentMatch = _COMMENT_RE_2.search(AVAIL)
+                if commentMatch:
+                    comment = commentMatch.group("comment")
+                else:
+                    comment = None
+            if comment is not None:
+                comment = comment.rstrip(".")
             AVAIL = kind
             break
     else:
